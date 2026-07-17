@@ -32,6 +32,11 @@ class BleService {
   BluetoothCharacteristic? rxCharacteristic;
 
   //--------------------------------------------------
+  // Receive Callback
+  //--------------------------------------------------
+  Function(String)? onReceive;
+
+  //--------------------------------------------------
   // Scan
   //--------------------------------------------------
   Future<List<BleDeviceInfo>> scan() async {
@@ -118,7 +123,7 @@ class BleService {
       await device.connect();
 
       connectedDevice = device;
-      
+
       await discoverUartService();
 
       debugPrint("Connected");
@@ -194,6 +199,7 @@ class BleService {
             debugPrint("RX Characteristic Found");
           }
         }
+        await startNotify();
 
         return (txCharacteristic != null &&
                 rxCharacteristic != null);
@@ -203,6 +209,32 @@ class BleService {
       debugPrint("UART Service NOT Found");
 
       return false;
+    }
+    //--------------------------------------------------
+    // Start Notify
+    //-------------------------------------------------- 
+    Future<void> startNotify() async {
+
+      if (rxCharacteristic == null) {
+       debugPrint("RX Characteristic NULL");
+        return;
+      }
+
+      await rxCharacteristic!.setNotifyValue(true);
+
+      rxCharacteristic!.lastValueStream.listen((value) {
+
+        String text = String.fromCharCodes(value);
+
+        debugPrint("RX : $text");
+
+        if (onReceive != null) {
+          onReceive!(text);
+        }
+
+      });
+
+      debugPrint("Notify Started");
     }
 
 }
