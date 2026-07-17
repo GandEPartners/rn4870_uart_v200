@@ -118,6 +118,8 @@ class BleService {
       await device.connect();
 
       connectedDevice = device;
+      
+      await discoverUartService();
 
       debugPrint("Connected");
 
@@ -149,5 +151,58 @@ class BleService {
     debugPrint("Disconnected");
 
   }
+
+  //--------------------------------------------------
+  // Discover UART Service
+  //--------------------------------------------------
+  Future<bool> discoverUartService() async {
+
+    if (connectedDevice == null) {
+     debugPrint("No Connected Device");
+     return false;
+   }
+
+    debugPrint("========== Discover Services ==========");
+
+   List<BluetoothService> services =
+       await connectedDevice!.discoverServices();
+
+    for (BluetoothService service in services) {
+
+      debugPrint("Service : ${service.uuid}");
+
+      if (service.uuid.toString().toUpperCase() ==
+          uartServiceUuid.toUpperCase()) {
+        
+        debugPrint("UART Service Found");
+
+        for (BluetoothCharacteristic c in service.characteristics) {
+
+          debugPrint("Characteristic : ${c.uuid}");
+
+          if (c.uuid.toString().toUpperCase() ==
+              txCharacteristicUuid.toUpperCase()) {
+
+            txCharacteristic = c;
+            debugPrint("TX Characteristic Found");
+          }
+
+          if (c.uuid.toString().toUpperCase() ==
+              rxCharacteristicUuid.toUpperCase()) {
+              
+            rxCharacteristic = c;
+            debugPrint("RX Characteristic Found");
+          }
+        }
+
+        return (txCharacteristic != null &&
+                rxCharacteristic != null);
+        }
+      }
+
+      debugPrint("UART Service NOT Found");
+
+      return false;
+    }
 
 }
