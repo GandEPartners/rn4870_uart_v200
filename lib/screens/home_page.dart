@@ -159,8 +159,20 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             connectStatus = "接続失敗";
                           }
-
                         });
+
+                          if (ok) {
+                            debugPrint("Wait before Handshake");
+
+                            await Future.delayed(
+                                const Duration(seconds: 2)
+                            );
+                          
+                            await ble.write("Communication Started.");
+
+                            debugPrint("Handshake Sent");
+                            
+                          }                    
 
                       },
 

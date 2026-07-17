@@ -249,9 +249,14 @@ class BleService {
 
       try {
 
+        final data = <int>[
+          ...text.codeUnits,
+          0x00,
+        ];
+
         await txCharacteristic!.write(
-          text.codeUnits,
-          withoutResponse: false,
+            data,
+            withoutResponse: false,
         );
 
         debugPrint("TX : $text");
@@ -266,6 +271,7 @@ class BleService {
 
       }
 
-    }
+  }
+
 
 }
