@@ -237,4 +237,35 @@ class BleService {
       debugPrint("Notify Started");
     }
 
+    //--------------------------------------------------
+    // UART Write
+    //--------------------------------------------------
+    Future<bool> write(String text) async {
+
+      if (txCharacteristic == null) {
+        debugPrint("TX Characteristic NULL");
+        return false;
+      }
+
+      try {
+
+        await txCharacteristic!.write(
+          text.codeUnits,
+          withoutResponse: false,
+        );
+
+        debugPrint("TX : $text");
+
+        return true;
+
+      } catch (e) {
+
+        debugPrint("Write Error : $e");
+
+        return false;
+
+      }
+
+    }
+
 }
