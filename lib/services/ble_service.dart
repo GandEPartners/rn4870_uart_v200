@@ -17,9 +17,19 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../models/ble_device.dart';
 
+//--------------------------------------------------
+// RN4870 UART UUID
+//--------------------------------------------------
+const String uartServiceUuid = "49535343-FE7D-4AE5-8FA9-9FAFD205E455";
+const String txCharacteristicUuid = "49535343-8841-43F4-A8D4-ECBE34729BB3";
+const String rxCharacteristicUuid = "49535343-1E4D-4BD9-BA61-23C647249616";
+
 class BleService {
 
   BluetoothDevice? connectedDevice;
+
+  BluetoothCharacteristic? txCharacteristic;
+  BluetoothCharacteristic? rxCharacteristic;
 
   //--------------------------------------------------
   // Scan
