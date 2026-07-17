@@ -26,6 +26,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   final BleService ble = BleService();
+  final TextEditingController txController = TextEditingController();
 
   List<BleDeviceInfo> deviceList = [];
 
@@ -77,6 +78,43 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const Divider(),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              "送信データ",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: txController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "送信文字列を入力",
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            ElevatedButton(
+              onPressed: () async {
+
+                if (txController.text.isEmpty) {
+                  return;
+                }
+
+                await ble.write(txController.text);
+
+              },
+              child: const Text("Send"),
+            ),
+
+            const SizedBox(height: 20),
 
             const Text(
               "デバイス一覧",
